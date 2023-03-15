@@ -1,6 +1,9 @@
 package telegram
 
 import (
+	"context"
+
+	"github.com/danilluk1/test-task-7/internal/telegram/commands"
 	"github.com/danilluk1/test-task-7/internal/telegram/middlewares"
 	"github.com/danilluk1/test-task-7/internal/telegram/types"
 	"github.com/danilluk1/test-task-7/internal/types"
@@ -31,8 +34,8 @@ func NewTelegram(token string, services *types.Services) *telegramService {
 		SessionManager: sessionManager,
 	}
 
-	commands.NewGetInfoCommand()
-	commands.NewGetStatisticCommand()
+	commands.NewGetInfoCommand(commandOpts)
+	commands.NewGetStatsCommand(commandOpts)
 
 	poller := tgb.NewPoller(router, client)
 

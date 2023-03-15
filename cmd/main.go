@@ -3,9 +3,12 @@ package main
 import (
 	"context"
 	"os"
+	"os/signal"
+	"syscall"
 
 	"github.com/danilluk1/test-task-7/internal/config"
 	"github.com/danilluk1/test-task-7/internal/db/sqlc"
+	"github.com/danilluk1/test-task/7/internal/telegram"
 	"github.com/jackc/pgx/v5"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -34,4 +37,10 @@ func main() {
 
 	tg := telegram.NewTelegram(cfg.TelegramToken)
 	tg.StartPolling(ctx)
+
+	log.Info().Msg("Started 🚀")
+	exitSignal := make(chan os.Signal, 1)
+	signal.Notify(exitSignal, syscall.SIGINT, syscall.SIGTERM)
+	<-exitSignal
+	log.Info().Msg("Closing...")
 }

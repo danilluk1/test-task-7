@@ -14,3 +14,11 @@ type GetInfoCommand struct {
 func (c *GetInfoCommand) HandleCommand(ctx context.Context, msg *tgb.MessageUpdate) error {
 
 }
+
+func NewGetInfoCommand(opts *tg_types.CommandOpts) {
+	cmd := &GetInfoCommand{
+		CommandOpts: opts,
+	}
+
+	opts.Router.Message(cmd.HandleCommand, tgb.Command("info"))
+}
