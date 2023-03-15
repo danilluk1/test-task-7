@@ -7,10 +7,8 @@ import (
 
 	tg_types "github.com/danilluk1/test-task-7/internal/telegram/types"
 	"github.com/jackc/pgx/v5"
-	"github.com/rs/zerolog/log"
-
-	// "github.com/mr-linch/go-tg"
 	"github.com/mr-linch/go-tg/tgb"
+	"github.com/rs/zerolog/log"
 )
 
 type GetStatsCommand struct {
