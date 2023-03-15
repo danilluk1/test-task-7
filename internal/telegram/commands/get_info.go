@@ -2,12 +2,14 @@ package commands
 
 import (
 	"context"
+	"encoding/json"
+	"errors"
 	"strings"
 
-	"github.com/danilluk1/test-task-7/internal/telegram/types"
-	"github.com/rs/zerolog/log"
-	// "github.com/mr-linch/go-tg"
+	tg_types "github.com/danilluk1/test-task-7/internal/telegram/types"
+	"github.com/jackc/pgx/v5"
 	"github.com/mr-linch/go-tg/tgb"
+	"github.com/rs/zerolog/log"
 )
 
 type GetInfoCommand struct {
@@ -15,7 +17,17 @@ type GetInfoCommand struct {
 }
 
 func (c *GetInfoCommand) HandleCommand(ctx context.Context, msg *tgb.MessageUpdate) error {
-	//chat := c.SessionManager.Get(ctx).ChatID
+	chatID := c.SessionManager.Get(ctx).ChatID
+
+	_, err := c.Services.Store.GetStats(ctx, chatID)
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			c.Services.Store.CreateStats(ctx, chatID)
+		} else {
+			log.Info().Err(err)
+			return msg.Answer("Internal server error").DoVoid(ctx)
+		}
+	}
 
 	parts := strings.Split(msg.Text, " ")
 	if len(parts) != 2 {
@@ -28,7 +40,14 @@ func (c *GetInfoCommand) HandleCommand(ctx context.Context, msg *tgb.MessageUpda
 		log.Info().Err(err)
 		return err
 	}
-	return msg.Answer(forecast.Name).DoVoid(ctx)
+
+	c.Services.Store.UpdateCounter(ctx, chatID)
+	forecastStr, err := json.Marshal(forecast)
+	if err != nil {
+		log.Info().Err(err)
+		return err
+	}
+	return msg.Answer(string(forecastStr)).DoVoid(ctx)
 }
 
 func NewGetInfoCommand(opts *tg_types.CommandOpts) {

@@ -31,7 +31,7 @@ func main() {
 
 	conn, err := pgx.Connect(ctx, cfg.PostgresUrl)
 	if err != nil {
-		log.Error().Err(err).Msg("Unable to connect to database:")
+		log.Fatal().Err(err).Msg("Unable to connect to database:")
 	}
 	defer conn.Close(ctx)
 

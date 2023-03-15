@@ -1,11 +1,9 @@
 services:
-  api:
+  bot:
     build:
       context: .
       dockerfile: Dockerfile
       target: bot
-    ports:
-      - "3002:3002"
     depends_on:
       postgres:
         condition: service_healthy
@@ -42,9 +40,9 @@ services:
       postgres:
         condition: service_healthy
     volumes:
-      - ./db/migration:/migration
+      - ./internal/db/migration:/migration
     env_file:
       - .env.docker
-    command: "-path=/migration/ -database postgres://postgres:admin@postgres:5432/test_task_6?sslmode=disable up"
+    command: "-path=/migration/ -database postgres://postgres:admin@postgres:5432/test_task_7?sslmode=disable up"
 volumes:
   postgres-data:

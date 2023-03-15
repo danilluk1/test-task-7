@@ -4,8 +4,14 @@
 
 package db
 
+import (
+	"context"
+)
 
 type Querier interface {
+	CreateStats(ctx context.Context, chatID string) (Statistic, error)
+	GetStats(ctx context.Context, chatID string) (Statistic, error)
+	UpdateCounter(ctx context.Context, chatID string) error
 }
 
 var _ Querier = (*Queries)(nil)

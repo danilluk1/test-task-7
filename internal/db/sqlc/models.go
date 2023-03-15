@@ -10,7 +10,7 @@ import (
 
 type Statistic struct {
 	ID        int32              `json:"id"`
-	UserID    string             `json:"user_id"`
+	ChatID    string             `json:"chat_id"`
 	Count     int64              `json:"count"`
 	CreatedAt pgtype.Timestamptz `json:"created_at"`
 }
