@@ -9,9 +9,10 @@ import (
 )
 
 type Config struct {
-	PostgresUrl   string `required:"true" default:"postgres://test:test@localhost:5432/test_task_7" envconfig:"POSTGRES_URL"`
-	TelegramToken string `required:"true" default:""`
+	PostgresUrl   string `required:"true" default:"postgres://postgres:admin@localhost:5432/test_task_7" envconfig:"POSTGRES_URL"`
+	TelegramToken string `required:"true" default:"" envconfig:"TELEGRAM_TOKEN"`
 	AppEnv        string `required:"true" default:"development" envconfig:"APP_ENV"`
+	WeatherApiKey string `required:"true" default:"" envconfig:"WEATHER_API_KEY"`
 }
 
 func New() (*Config, error) {
@@ -23,7 +24,6 @@ func New() (*Config, error) {
 		return nil, err
 	}
 
-	wd = filepath.Join(wd, "..", "..")
 	envPath := filepath.Join(wd, ".env")
 	_ = godotenv.Load(envPath)
 

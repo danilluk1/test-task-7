@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+
+	"github.com/rs/zerolog/log"
 )
 
 const (
@@ -50,9 +52,20 @@ type wind struct {
 	Gust  float32 `json:"gust"`
 }
 
-func GetCurrentWeather(city string) (*forecast, error) {
-	resp, err := http.Get(fmt.Sprintf("%s?q=%s&lang=ru&units=metric", ApiUrl, city))
+type Service struct {
+	ApiKey string
+}
+
+func New(apiKey string) *Service {
+	return &Service{
+		ApiKey: apiKey,
+	}
+}
+
+func (s *Service) GetCurrentWeather(city string) (*forecast, error) {
+	resp, err := http.Get(fmt.Sprintf("%s?q=%s&lang=ru&units=metric&appid=%s", ApiUrl, city, s.ApiKey))
 	if err != nil {
+		log.Err(err)
 		return nil, err
 	}
 	defer resp.Body.Close()

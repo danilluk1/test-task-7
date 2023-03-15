@@ -16,7 +16,7 @@ type LoggMiddleware struct {
 func (c *LoggMiddleware) Wrap(next tgb.Handler) tgb.Handler {
 	return tgb.HandlerFunc(func(ctx context.Context, update *tgb.Update) error {
 		defer func(started time.Time) {
-			log.Info().Dur("duration", time.Since(started)).Msg("update handled")
+			log.Info().Dur("duration", time.Since(started)).Msg(update.Message.Text)
 		}(time.Now())
 
 		return next.Handle(ctx, update)

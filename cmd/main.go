@@ -8,7 +8,9 @@ import (
 
 	"github.com/danilluk1/test-task-7/internal/config"
 	"github.com/danilluk1/test-task-7/internal/db/sqlc"
-	"github.com/danilluk1/test-task/7/internal/telegram"
+	"github.com/danilluk1/test-task-7/internal/telegram"
+	"github.com/danilluk1/test-task-7/internal/types"
+	"github.com/danilluk1/test-task-7/internal/weather"
 	"github.com/jackc/pgx/v5"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -34,8 +36,14 @@ func main() {
 	defer conn.Close(ctx)
 
 	store := db.NewStore(conn)
+	weatherService := weather.New(cfg.WeatherApiKey)
 
-	tg := telegram.NewTelegram(cfg.TelegramToken)
+	services := &types.Services{
+		Store:          store,
+		WeatherService: weatherService,
+	}
+
+	tg := telegram.NewTelegram(cfg.TelegramToken, services)
 	tg.StartPolling(ctx)
 
 	log.Info().Msg("Started 🚀")
