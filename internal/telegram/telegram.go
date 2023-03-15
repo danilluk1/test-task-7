@@ -33,7 +33,6 @@ func NewTelegram(token string, services *types.Services) *telegramService {
 		Router:         router,
 		SessionManager: sessionManager,
 	}
-
 	commands.NewGetInfoCommand(commandOpts)
 	commands.NewGetStatsCommand(commandOpts)
 

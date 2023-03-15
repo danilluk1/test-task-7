@@ -16,13 +16,14 @@ type GetStatsCommand struct {
 }
 
 func (c *GetStatsCommand) HandleCommand(ctx context.Context, msg *tgb.MessageUpdate) error {
-	chatID := c.SessionManager.Get(ctx).ChatID
+	chatID := msg.Chat.ID.PeerID()
+
 	stats, err := c.Services.Store.GetStats(ctx, chatID)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			return msg.Answer("We don't have any info about you").DoVoid(ctx)
 		} else {
-			log.Info().Err(err)
+			log.Info().Err(err).Msg("")
 			return msg.Answer("Internal server error").DoVoid(ctx)
 		}
 	}

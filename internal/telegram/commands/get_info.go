@@ -17,14 +17,14 @@ type GetInfoCommand struct {
 }
 
 func (c *GetInfoCommand) HandleCommand(ctx context.Context, msg *tgb.MessageUpdate) error {
-	chatID := c.SessionManager.Get(ctx).ChatID
+	chatID := msg.Chat.ID.PeerID()
 
 	_, err := c.Services.Store.GetStats(ctx, chatID)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			c.Services.Store.CreateStats(ctx, chatID)
 		} else {
-			log.Info().Err(err)
+			log.Info().Err(err).Msg("")
 			return msg.Answer("Internal server error").DoVoid(ctx)
 		}
 	}
@@ -37,14 +37,14 @@ func (c *GetInfoCommand) HandleCommand(ctx context.Context, msg *tgb.MessageUpda
 
 	forecast, err := c.Services.WeatherService.GetCurrentWeather(city)
 	if err != nil {
-		log.Info().Err(err)
+		log.Info().Err(err).Msg("")
 		return err
 	}
 
 	c.Services.Store.UpdateCounter(ctx, chatID)
 	forecastStr, err := json.Marshal(forecast)
 	if err != nil {
-		log.Info().Err(err)
+		log.Info().Err(err).Msg("")
 		return err
 	}
 	return msg.Answer(string(forecastStr)).DoVoid(ctx)
